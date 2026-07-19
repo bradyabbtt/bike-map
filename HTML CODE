@@ -810,6 +810,491 @@
     #aiLauncher{left:10px;bottom:112px;width:54px;height:54px}.ai-launch-copy{display:none}.right-map-controls{display:none}
   }
 
+
+  /* ---------- Requested route-planner cleanup ---------- */
+  .route-panel-header,
+  .route-gallery,
+  .suggestions-block,
+  #plannerSettingsToggle,
+  #drawToolbarProxy,
+  .difficulty-stat{display:none!important;}
+
+  #sidebar .scroll{
+    height:100%;
+    max-height:none;
+    padding:24px 0 18px;
+  }
+  #sidebar .waypoint-section{padding-top:0;}
+
+  #drawTab{
+    display:flex!important;
+    position:absolute;
+    left:auto!important;
+    right:18px!important;
+    bottom:338px!important;
+    z-index:940;
+    min-width:148px;
+    height:52px;
+    padding:0 19px;
+    border:0;
+    border-radius:26px;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    background:var(--komoot-green);
+    color:#fff;
+    box-shadow:0 5px 18px rgba(62,91,16,.28);
+    font:750 14px 'Inter',sans-serif;
+    text-transform:none;
+    letter-spacing:0;
+    cursor:pointer;
+    transition:transform .16s ease,background .16s ease,box-shadow .16s ease,bottom .22s ease;
+  }
+  #mapwrap.elevation-collapsed #drawTab{bottom:126px!important;}
+  #drawTab:hover{background:#416414;color:#fff;transform:translateY(-2px);box-shadow:0 8px 22px rgba(62,91,16,.34);}
+  #drawTab.active{background:#ce5a12;color:#fff;}
+  #drawTab .draw-route-symbol{font-size:24px;line-height:1;transform:rotate(-12deg);}
+
+  @media(max-width:1250px){
+    #sidebar .scroll{height:100%;}
+  }
+  @media(max-width:900px){
+    #sidebar .scroll{height:100%;padding-top:20px;}
+    #drawTab{right:10px!important;bottom:320px!important;min-width:132px;height:48px;padding:0 15px;}
+    #mapwrap.elevation-collapsed #drawTab{bottom:112px!important;}
+  }
+
+
+  /* ---------- Clean first-visit route state + editable time estimate ---------- */
+  #sidebar.route-empty{
+    width:366px;min-width:366px;bottom:auto;height:auto;max-height:none;
+    border-radius:24px;overflow:visible;
+  }
+  #sidebar.route-empty .scroll{
+    height:auto;max-height:none;overflow:visible;padding:0;display:block;
+  }
+  #sidebar.route-empty .waypoint-section{padding:0!important;}
+  #sidebar.route-empty + #panelCollapseHandle{display:none;}
+  #routeEmptyState[hidden],#waypointPlannerContent[hidden]{display:none!important;}
+  .route-empty-state{
+    padding:30px 28px 27px;text-align:center;background:#fff;border-radius:24px;
+  }
+  .route-empty-visual{
+    width:64px;height:64px;margin:0 auto 19px;border-radius:20px;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    background:linear-gradient(145deg,#eef3df,#f8faf1);color:var(--komoot-green);
+    box-shadow:inset 0 0 0 1px rgba(79,117,24,.10);
+  }
+  .route-empty-visual:before,.route-empty-visual:after{
+    content:'';position:absolute;border-radius:50%;background:#fff;border:3px solid currentColor;
+    width:10px;height:10px;
+  }
+  .route-empty-visual:before{left:13px;bottom:12px;}
+  .route-empty-visual:after{right:12px;top:11px;color:var(--komoot-orange);}
+  .route-empty-path{font-size:33px;line-height:1;transform:rotate(-17deg);font-weight:500;}
+  .route-empty-state h2{
+    margin:0 0 9px;font:800 25px/1.1 'Inter',sans-serif;letter-spacing:-.65px;color:#25231f;
+  }
+  .route-empty-state p{
+    margin:0 auto 22px;max-width:285px;font:450 14px/1.55 'Inter',sans-serif;color:#777169;
+  }
+  .route-empty-actions{display:grid;gap:9px;}
+  .route-empty-actions button{
+    width:100%;height:50px;border-radius:25px;font:750 14px 'Inter',sans-serif;
+    display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:.16s ease;
+  }
+  .route-empty-primary{border:0;background:var(--komoot-green);color:#fff;box-shadow:0 6px 16px rgba(62,91,16,.20);}
+  .route-empty-primary:hover{background:#416414;transform:translateY(-1px);}
+  .route-empty-secondary{border:1.5px solid #dcd7cf;background:#fff;color:#35312c;}
+  .route-empty-secondary:hover{border-color:#a9a198;background:#faf9f6;transform:translateY(-1px);}
+  .route-empty-actions .route-action-icon{font-size:21px;font-weight:400;line-height:1;}
+  .route-empty-note{display:block;margin-top:15px;color:#9a948c;font:500 11px/1.4 'Inter',sans-serif;}
+  #emptyHint{display:none!important;}
+  #startRouteToast{
+    position:absolute;z-index:950;top:78px;left:calc(50% + 160px);transform:translate(-50%,-8px);
+    padding:11px 17px;border:1px solid rgba(37,35,31,.10);border-radius:999px;background:rgba(255,255,255,.97);
+    color:#39352f;box-shadow:0 7px 24px rgba(37,34,28,.16);font:700 13px 'Inter',sans-serif;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+  }
+  #startRouteToast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
+
+  .time-estimator-stat{
+    appearance:none;border:0;background:transparent;text-align:left;cursor:pointer;position:relative;
+    font-family:'Inter',sans-serif;border-radius:12px;transition:background .15s ease,transform .15s ease;
+  }
+  .time-estimator-stat:hover,.time-estimator-stat[aria-expanded="true"]{background:#f5f3ee;}
+  .time-estimator-stat:hover{transform:translateY(-1px);}
+  .time-estimator-stat .lbl{display:flex;align-items:center;gap:6px;}
+  .time-edit-hint{font-size:10px;color:var(--komoot-green);font-weight:750;}
+  .time-estimator-popover{
+    position:absolute;z-index:980;left:118px;bottom:calc(100% + 12px);width:278px;padding:17px;
+    border:1px solid rgba(42,38,32,.10);border-radius:18px;background:#fff;color:#282520;
+    box-shadow:0 18px 48px rgba(37,34,28,.20);
+  }
+  .time-estimator-popover[hidden]{display:none!important;}
+  .time-estimator-popover:after{
+    content:'';position:absolute;left:57px;bottom:-7px;width:13px;height:13px;background:#fff;
+    border-right:1px solid rgba(42,38,32,.10);border-bottom:1px solid rgba(42,38,32,.10);transform:rotate(45deg);
+  }
+  .time-estimator-popover strong{display:block;font:800 15px/1.2 'Inter',sans-serif;color:#26231f;}
+  .time-estimator-popover p{margin:5px 0 14px;color:#7b756d;font:450 12px/1.45 'Inter',sans-serif;}
+  .speed-entry-label{display:block;margin-bottom:6px;color:#5e5850;font:700 11px 'Inter',sans-serif;text-transform:uppercase;letter-spacing:.55px;}
+  .speed-entry-row{height:48px;display:flex;align-items:center;border:1.5px solid #d9d4cc;border-radius:14px;background:#fff;overflow:hidden;}
+  .speed-entry-row:focus-within{border-color:#8eaa62;box-shadow:0 0 0 3px rgba(79,117,24,.10);}
+  #averageSpeedInput{width:100%;height:100%;min-width:0;border:0!important;box-shadow:none!important;padding:0 8px 0 14px!important;font:800 20px 'Inter',sans-serif;color:#282520;outline:none;}
+  .speed-entry-row span{padding-right:14px;color:#777169;font:700 12px 'Inter',sans-serif;}
+  .speed-presets{display:flex;gap:6px;margin-top:10px;}
+  .speed-presets button{flex:1;height:31px;border:1px solid #e1ddd6;border-radius:999px;background:#faf9f6;color:#575149;font:700 11px 'Inter',sans-serif;cursor:pointer;}
+  .speed-presets button:hover{border-color:#a9b98a;background:#f1f5e7;color:#3f5f13;}
+  .time-estimator-result{margin-top:12px;padding:10px 12px;border-radius:12px;background:#f3f6e9;color:#3f5f13;font:700 12px/1.35 'Inter',sans-serif;}
+  #elevwrap:not(.collapsed) .time-estimator-popover{left:140px;top:86px;bottom:auto;}
+  #elevwrap:not(.collapsed) .time-estimator-popover:after{display:none;}
+
+  @media(max-width:1250px){
+    #sidebar.route-empty{width:340px;min-width:340px;}
+    #startRouteToast{left:50%;}
+    .time-estimator-popover{left:100px;}
+  }
+  @media(max-width:900px){
+    #sidebar.route-empty{left:10px;top:10px;width:min(350px,calc(100vw - 20px));min-width:0;height:auto;transform:none;}
+    #mapwrap.route-panel-collapsed #sidebar.route-empty{transform:none;}
+    .route-empty-state{padding:24px 22px 22px;}
+    #startRouteToast{top:70px;left:50%;max-width:calc(100vw - 32px);white-space:nowrap;}
+    .time-estimator-popover{position:fixed;left:12px;right:12px;bottom:116px;width:auto;}
+    .time-estimator-popover:after{display:none;}
+    #elevwrap:not(.collapsed) .time-estimator-popover{position:fixed;left:12px;right:12px;top:auto;bottom:116px;}
+  }
+
+
+  /* ---------- Desktop polish: clean onboarding card + full-width route summary ---------- */
+  #sidebar.route-empty{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    overflow:visible;
+  }
+  #sidebar.route-empty .route-empty-state{
+    overflow:hidden;
+    border:1px solid rgba(40,37,31,.08);
+    box-shadow:0 10px 30px rgba(37,34,28,.14);
+    isolation:isolate;
+  }
+
+  @media(min-width:901px){
+    #elevwrap,
+    #elevwrap.collapsed,
+    #mapwrap.route-panel-collapsed #elevwrap{
+      left:18px!important;
+      right:18px!important;
+      width:auto!important;
+    }
+
+    #elevwrap.collapsed .summary-metrics{
+      flex:0 0 50%;
+      width:50%;
+      max-width:50%;
+      padding-right:18px;
+    }
+    #elevwrap.collapsed .summary-stat{
+      flex:1 1 0;
+      min-width:0;
+      padding-right:14px;
+    }
+    #elevwrap.collapsed .elevation-chart-area{
+      flex:1 1 50%;
+      width:auto;
+      min-width:0;
+      height:74px;
+      margin:0 142px 0 0;
+      padding:0 18px 0 24px;
+      border-left:1px solid #ddd7ce;
+      opacity:1!important;
+      transform:none!important;
+      pointer-events:auto!important;
+    }
+    #elevwrap.collapsed .elev-title-row{height:22px;margin:0;}
+    #elevwrap.collapsed #elevsvg{width:100%;height:46px;}
+    #elevwrap.collapsed #elevToggle{
+      position:absolute;
+      right:20px;
+      top:25px;
+      margin:0;
+    }
+
+    #elevwrap:not(.collapsed) .summary-metrics{
+      width:auto;
+      max-width:none;
+    }
+  }
+
+
+  /* ---------- Focused waypoint panel + working right-side map controls ---------- */
+  @media(min-width:901px){
+    #sidebar:not(.route-empty),
+    #sidebar.settings-open:not(.route-empty){
+      left:10px;
+      top:10px;
+      bottom:132px;
+      width:340px;
+      min-width:340px;
+      height:auto;
+      max-height:none;
+      border-radius:22px;
+      overflow:hidden;
+      background:#fff;
+    }
+    #sidebar:not(.route-empty) .scroll,
+    #sidebar.settings-open:not(.route-empty) .scroll{
+      height:100%;
+      max-height:100%;
+      padding:18px 0 14px;
+      overflow-y:auto;
+    }
+    #sidebar:not(.route-empty) .waypoint-section,
+    #sidebar.settings-open:not(.route-empty) .waypoint-section{
+      padding:0 18px!important;
+      border:0!important;
+      background:#fff!important;
+    }
+    #sidebar:not(.route-empty) .waypoint-heading-row{
+      margin:0 0 12px;
+      padding:0 4px;
+    }
+    #sidebar:not(.route-empty) .waypoint-title h2{
+      font-size:18px;
+      letter-spacing:-.25px;
+    }
+    #sidebar:not(.route-empty) .sort-chip,
+    #sidebar:not(.route-empty) .profile-control,
+    #sidebar:not(.route-empty) #modeClickBtn,
+    #sidebar:not(.route-empty) .route-action-row,
+    #sidebar:not(.route-empty) #inlineSearch,
+    #sidebar .advanced-section,
+    #sidebar.settings-open .advanced-section,
+    #sidebar #apiWarn{
+      display:none!important;
+    }
+    #sidebar:not(.route-empty) #wplist{
+      max-height:calc(100dvh - 225px);
+      overflow-y:auto;
+      padding:1px 2px 8px;
+    }
+    #sidebar:not(.route-empty) #wplist li{
+      min-height:48px;
+      margin:0 0 8px;
+      padding:7px 10px;
+      border:1px solid #e5e1da;
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(39,35,28,.055);
+    }
+    #sidebar:not(.route-empty) .wp-coord{font-size:14px;font-weight:650;}
+    #sidebar:not(.route-empty) .wp-actions{opacity:1;}
+    #panelCollapseHandle{
+      left:347px;
+      top:230px;
+    }
+    #mapwrap.route-panel-collapsed #panelCollapseHandle{left:0;}
+    .toolbar-left{left:370px;}
+
+    #mapwrap #aiLauncher,
+    #mapwrap.route-panel-collapsed #aiLauncher{
+      left:auto!important;
+      right:22px!important;
+      top:94px!important;
+      bottom:auto!important;
+      width:74px;
+      height:74px;
+      min-width:0;
+      padding:7px;
+      border-radius:14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      transform:none;
+    }
+    #mapwrap #aiLauncher:hover{transform:translateY(-2px);}
+    .right-map-controls{
+      right:22px;
+      top:180px;
+      z-index:940;
+      pointer-events:auto;
+    }
+    .right-map-controls .circle-tool,
+    .right-map-controls .zoom-visual,
+    .right-map-controls .zoom-visual button{pointer-events:auto;}
+    .right-map-controls button{cursor:pointer;}
+    .right-map-controls button:hover{background:#f3f1ec;}
+    .north-control{font-weight:850!important;}
+    .north-control.control-pulse{background:#edf2d7!important;color:var(--komoot-green)!important;}
+    .map-location-marker{
+      width:16px;height:16px;border-radius:50%;background:#075ac8;border:3px solid #fff;
+      box-shadow:0 2px 9px rgba(7,90,200,.4);
+    }
+  }
+
+
+  /* ---------- Toolbar cleanup: history, map type, and clear route ---------- */
+  .history-tool{padding:0;}
+  .history-tool svg{
+    width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .history-tool:disabled{opacity:.34;cursor:not-allowed;box-shadow:none;}
+  .history-tool:disabled:hover{background:#fff;}
+  .map-content-menu>summary{gap:8px;}
+  #clearRouteFloating.clear-route-top{
+    position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    height:46px;display:flex!important;align-items:center;justify-content:center;gap:8px;
+    padding:0 18px;border:1px solid #e1dcd4;border-radius:24px;background:#fff;color:#5f5951;
+    box-shadow:0 3px 14px rgba(39,35,28,.10);font:700 14px 'Inter',sans-serif;
+    text-transform:none;letter-spacing:0;white-space:nowrap;cursor:pointer;transform:none!important;
+  }
+  #clearRouteFloating.clear-route-top span{font-size:22px;line-height:1;font-weight:350;color:#9b302a;}
+  #clearRouteFloating.clear-route-top:hover{background:#fff5f3;border-color:#e6aaa4;color:#942f29;transform:translateY(-1px)!important;}
+  @media(max-width:900px){
+    #clearRouteFloating.clear-route-top{width:46px;padding:0;font-size:0;border-radius:50%;}
+    #clearRouteFloating.clear-route-top span{font-size:24px;}
+  }
+
+
+
+  /* ---------- Search + waypoints tabs and simplified map navigation ---------- */
+  .planner-tabs{
+    display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:12px 14px 8px;padding:4px;
+    border:1px solid #e6e1d9;border-radius:15px;background:#f5f3ef;
+  }
+  .planner-tab{
+    height:40px;border:0;border-radius:11px;background:transparent;color:#777169;
+    font:750 13px 'Inter',sans-serif;cursor:pointer;transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+  }
+  .planner-tab:hover{color:#302d28;}
+  .planner-tab.active{background:#fff;color:#27241f;box-shadow:0 2px 8px rgba(39,35,28,.09);}
+  #waypointTabCount{
+    display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;margin-left:5px;padding:0 6px;
+    border-radius:999px;background:#edf2d7;color:#4f7518;font-size:10px;
+  }
+  .planner-tab-panel[hidden]{display:none!important;}
+  .search-planner-panel{padding:14px 18px 20px!important;background:#fff!important;}
+  .search-panel-heading h2{margin:0 0 6px;font:800 20px/1.15 'Inter',sans-serif;letter-spacing:-.4px;color:#26231f;text-transform:none;}
+  .search-panel-heading p{margin:0 0 15px;color:#7b756d;font:450 12.5px/1.5 'Inter',sans-serif;}
+  .route-point-placement{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:6px;margin-bottom:11px;}
+  .route-point-placement button{
+    height:37px;border:1px solid #dfdad2;border-radius:999px;background:#faf9f6;color:#69635b;
+    font:750 11.5px 'Inter',sans-serif;cursor:pointer;
+  }
+  .route-point-placement button:hover{border-color:#aaa39a;color:#302d28;}
+  .route-point-placement button.active{border-color:#4f7518;background:#edf2d7;color:#3f5f13;box-shadow:inset 0 0 0 1px rgba(79,117,24,.08);}
+  .planner-search-row{display:flex;gap:7px;}
+  .planner-search-row input{
+    min-width:0;height:48px;border:1.5px solid #d8d3ca!important;border-radius:15px!important;padding:0 14px!important;
+    background:#fff!important;color:#282520!important;font:550 13.5px 'Inter',sans-serif!important;box-shadow:none!important;
+  }
+  .planner-search-row input:focus{outline:none;border-color:#8ca65f!important;box-shadow:0 0 0 3px rgba(79,117,24,.10)!important;}
+  .planner-search-button{
+    flex:0 0 auto;height:48px;padding:0 16px;border:0;border-radius:15px;background:#4f7518;color:#fff;
+    font:750 12px 'Inter',sans-serif;cursor:pointer;
+  }
+  .planner-search-button:hover{background:#416414;}
+  .planner-search-results{max-height:310px;margin-top:10px;border-radius:14px;border-color:#e5e0d8;background:#fff;}
+  .planner-search-result{display:flex;align-items:center;gap:10px;padding:11px 10px!important;}
+  .planner-search-result-copy{min-width:0;flex:1;}
+  .planner-search-result .search-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;}
+  .search-add-label{flex:0 0 auto;padding:6px 8px;border-radius:999px;background:#f1f4e7;color:#4f7518;font:750 9.5px 'Inter',sans-serif;white-space:nowrap;}
+  .search-route-note{margin-top:12px;padding:11px 12px;border-radius:12px;background:#f8f7f3;color:#777169;font:500 11px/1.45 'Inter',sans-serif;}
+  .search-route-note strong{color:#4b463f;}
+  .wp-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+  .wp-role{color:#918a81;font:750 9.5px/1.1 'Inter',sans-serif;text-transform:uppercase;letter-spacing:.55px;}
+  #wplist .wp-coord{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .location-control{font-size:22px!important;font-weight:700!important;line-height:1;}
+
+  #sidebar.route-empty{
+    background:#fff!important;border:1px solid rgba(40,37,31,.08)!important;border-radius:24px!important;
+    box-shadow:0 10px 30px rgba(37,34,28,.14)!important;overflow:hidden!important;
+  }
+  #sidebar.route-empty .scroll{overflow:hidden!important;}
+  #sidebar.route-empty .route-empty-state{border:0!important;border-radius:0!important;box-shadow:none!important;padding-top:20px;}
+  #sidebar.route-empty + #panelCollapseHandle{display:block;}
+
+  @media(min-width:901px){
+    #sidebar:not(.route-empty) .scroll,#sidebar.settings-open:not(.route-empty) .scroll{padding-top:0;}
+    #sidebar:not(.route-empty) .planner-tabs{margin-top:12px;}
+    #sidebar:not(.route-empty) .waypoint-section,#sidebar.settings-open:not(.route-empty) .waypoint-section{padding:10px 18px 0!important;}
+    #sidebar:not(.route-empty) #wplist{max-height:calc(100dvh - 295px);}
+    .right-map-controls{top:180px;}
+  }
+  @media(max-width:900px){
+    .planner-tabs{margin:10px 10px 7px;}
+    .search-planner-panel{padding:12px 14px 18px!important;}
+    .route-point-placement{grid-template-columns:1fr 1fr 1fr;}
+  }
+
+
+  /* ---------- Search tab reliability + bottom-right map navigation ---------- */
+  #sidebar.search-tab-open{
+    height:auto!important;
+    max-height:calc(100dvh - 28px)!important;
+    overflow:hidden!important;
+  }
+  #sidebar.search-tab-open .scroll{
+    height:auto!important;
+    max-height:calc(100dvh - 28px)!important;
+    overflow-y:auto!important;
+  }
+  #sidebar.search-tab-open #searchPlannerPanel{
+    display:block!important;
+  }
+  #sidebar.search-tab-open #waypointsPlannerPanel{
+    display:none!important;
+  }
+  #previewRouteBtn{display:none!important;}
+  .location-control{
+    color:#292722!important;
+  }
+  .location-arrow-icon{
+    width:22px;height:22px;display:block;fill:currentColor;
+  }
+  .location-control.locating .location-arrow-icon{
+    opacity:.35;
+  }
+  .location-control.locating:after{
+    content:'';position:absolute;width:18px;height:18px;border:2px solid #c9c5be;border-top-color:#4f7518;
+    border-radius:50%;animation:locationSpin .7s linear infinite;
+  }
+  @keyframes locationSpin{to{transform:rotate(360deg)}}
+  @media(min-width:901px){
+    .right-map-controls{
+      top:auto!important;
+      bottom:196px!important;
+    }
+  }
+
+
+
+  /* ---------- Detailed search results, waypoint names, and grouped map controls ---------- */
+  .planner-search-result{align-items:flex-start!important;}
+  .planner-search-result-copy{display:flex;flex-direction:column;gap:3px;}
+  .planner-search-result .search-title{font-size:13.5px;line-height:1.3;white-space:normal;}
+  .planner-search-result .search-sub{font-size:11.5px;line-height:1.35;color:#686159;}
+  .search-result-context{font:600 9.5px/1.3 'Inter',sans-serif;color:#9a938a;text-transform:uppercase;letter-spacing:.35px;}
+  .wp-name-wrap{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px;}
+  .wp-custom-name{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 14px/1.25 'Inter',sans-serif;color:#302e2a;}
+  .wp-address-detail{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 10.5px/1.25 'Inter',sans-serif;color:#918a81;}
+  .rename-waypoint-button{font-size:15px!important;color:#777169!important;}
+  .rename-waypoint-button:hover{color:#4f7518!important;background:#f1f4e7!important;}
+  @media(min-width:901px){
+    #mapwrap #aiLauncher,
+    #mapwrap.route-panel-collapsed #aiLauncher{
+      top:auto!important;
+      bottom:345px!important;
+      right:22px!important;
+      left:auto!important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -817,61 +1302,63 @@
   <div id="mapwrap" class="elevation-collapsed">
     <div id="map"></div>
 
-    <aside id="sidebar" aria-label="Route planner">
-      <header class="route-panel-header">
-        <h1>Your Route</h1>
-        <button class="panel-more" type="button" aria-label="More route options">•••</button>
-      </header>
-
-      <div class="route-gallery" aria-label="Route image preview">
-        <div class="gallery-main">
-          <div class="gallery-icons"><span>▧</span><span>●</span><span>⌁</span></div>
-          <strong>Route images will appear here</strong>
-        </div>
-        <div class="gallery-stack"><span></span><span></span></div>
-      </div>
+    <aside id="sidebar" class="route-empty" aria-label="Route planner">
 
       <div class="scroll">
-        <section class="section waypoint-section">
-          <div class="waypoint-heading-row">
-            <div class="waypoint-title"><h2>Waypoints</h2><span class="sort-chip" title="Reorder waypoints">↕</span></div>
-            <label class="profile-control" title="Choose cycling profile">
-              <span class="bike-icon">♧</span>
-              <select id="profile">
-                <option value="cycling-road">Road cycling</option>
-                <option value="cycling-regular">Regular cycling</option>
-                <option value="cycling-mountain">Mountain biking</option>
-                <option value="cycling-electric">E-bike</option>
-              </select>
-            </label>
+        <div class="planner-tabs" role="tablist" aria-label="Route planner sections">
+          <button id="searchPlannerTab" class="planner-tab" type="button" role="tab" aria-selected="false" aria-controls="searchPlannerPanel">Search</button>
+          <button id="waypointsPlannerTab" class="planner-tab active" type="button" role="tab" aria-selected="true" aria-controls="waypointsPlannerPanel">Waypoints <span id="waypointTabCount">0</span></button>
+        </div>
+
+        <section id="searchPlannerPanel" class="section planner-tab-panel search-planner-panel" role="tabpanel" aria-labelledby="searchPlannerTab" hidden>
+          <div class="search-panel-heading">
+            <h2>Search the map</h2>
+            <p>Find any address, business, park, or trail and add it to your route.</p>
           </div>
-
-          <ul id="wplist"></ul>
-          <div class="empty-hint" id="emptyHint">Add your start and finish, or draw the roads you want to ride.</div>
-
-          <button class="add-waypoint-button active" id="modeClickBtn" type="button"><span>＋</span> Add Waypoint</button>
-
-          <div class="route-action-row">
-            <button id="searchPlaceToggle" class="route-action" type="button"><span>⌕</span> Search place</button>
-            <span class="action-divider"></span>
-            <button id="roundTripQuick" class="route-action" type="button"><span class="mini-switch"></span> Round trip</button>
-            <button id="openPanelOptions" class="sliders-button" type="button" aria-label="Open route preferences">☷</button>
+          <div class="route-point-placement" role="group" aria-label="Choose where this address belongs in the route">
+            <button type="button" data-route-placement="start">Start</button>
+            <button type="button" class="active" data-route-placement="next">Next stop</button>
+            <button type="button" data-route-placement="finish">Finish</button>
           </div>
+          <div class="planner-search-row">
+            <input type="text" id="locationSearch" placeholder="Search an address or place" autocomplete="off" />
+            <button class="planner-search-button" id="locationSearchBtn" type="button" aria-label="Search map">Search</button>
+          </div>
+          <div class="statusline" id="searchStatus">Choose Start, Next stop, or Finish, then search anywhere.</div>
+          <ul class="search-results planner-search-results" id="searchResults"></ul>
+          <div class="search-route-note"><strong>Multi-stop routing:</strong> keep searching and add as many stops as you need. The route follows the numbered order.</div>
+        </section>
 
-          <div id="inlineSearch" class="inline-search-panel">
-            <div class="searchrow">
-              <input type="text" id="locationSearch" placeholder="Address, trail, park, or city" autocomplete="off" />
-              <button class="btn small" id="locationSearchBtn">Search</button>
+        <section id="waypointsPlannerPanel" class="section waypoint-section planner-tab-panel" role="tabpanel" aria-labelledby="waypointsPlannerTab">
+          <div id="routeEmptyState" class="route-empty-state">
+            <div class="route-empty-visual" aria-hidden="true"><span class="route-empty-path">⌁</span></div>
+            <h2>Plan your route</h2>
+            <p>Place your first point on the map, or draw the exact roads you want to ride.</p>
+            <div class="route-empty-actions">
+              <button id="emptyStartClick" class="route-empty-primary" type="button"><span class="route-action-icon">＋</span> Click map to start</button>
+              <button id="emptyStartDraw" class="route-empty-secondary" type="button"><span class="route-action-icon">⌁</span> Draw your route</button>
             </div>
-            <div class="statusline" id="searchStatus">Search results are added as the next route point.</div>
-            <ul class="search-results" id="searchResults"></ul>
+            <small class="route-empty-note">Your numbered waypoints will appear here as you build.</small>
           </div>
 
-          <div class="suggestions-block">
-            <h3>Suggestions</h3>
-            <button type="button" class="suggestion-item" data-search="Home"><span class="suggestion-icon home">⌂</span><span>Home</span></button>
-            <button type="button" class="suggestion-item" id="useCurrentLocation"><span class="suggestion-icon current">➤</span><span>Current location</span></button>
-            <button type="button" class="suggestion-item" id="showSavedRoutes"><span class="suggestion-icon saved">★</span><span>Saved places</span></button>
+          <div id="waypointPlannerContent" hidden>
+            <div class="waypoint-heading-row">
+              <div class="waypoint-title"><h2>Waypoints</h2><span class="sort-chip" title="Reorder waypoints">↕</span></div>
+              <label class="profile-control" title="Choose cycling profile">
+                <span class="bike-icon">♧</span>
+                <select id="profile">
+                  <option value="cycling-road">Road cycling</option>
+                  <option value="cycling-regular">Regular cycling</option>
+                  <option value="cycling-mountain">Mountain biking</option>
+                  <option value="cycling-electric">E-bike</option>
+                </select>
+              </label>
+            </div>
+
+            <ul id="wplist"></ul>
+            <div class="empty-hint" id="emptyHint"></div>
+
+            <button class="add-waypoint-button active" id="modeClickBtn" type="button"><span>＋</span> Add Waypoint on map</button>
           </div>
         </section>
 
@@ -927,12 +1414,14 @@
     <button id="panelCollapseHandle" type="button" aria-label="Collapse route panel">‹</button>
 
     <div class="top-toolbar toolbar-left" aria-label="Map tools">
-      <button id="undoBtn" class="circle-tool" type="button" title="Undo last waypoint">↶</button>
-      <button id="redoVisual" class="circle-tool muted-tool" type="button" title="Redo unavailable">↷</button>
-      <button id="drawToolbarProxy" class="circle-tool" type="button" title="Draw a route">✎</button>
-      <button class="circle-tool" type="button" title="Preview route">◉</button>
+      <button id="undoBtn" class="circle-tool history-tool" type="button" title="Undo last waypoint" aria-label="Undo last waypoint">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 5 11l4 4"/><path d="M5 11h8a6 6 0 0 1 6 6"/></svg>
+      </button>
+      <button id="redoVisual" class="circle-tool history-tool" type="button" title="Redo last waypoint" aria-label="Redo last waypoint">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 7 4 4-4 4"/><path d="M19 11h-8a6 6 0 0 0-6 6"/></svg>
+      </button>
       <details class="toolbar-menu map-content-menu">
-        <summary><span>⌖</span> Map content <b>⌄</b></summary>
+        <summary>Map type <b>⌄</b></summary>
         <div id="layerSwitcher">
           <button class="layer-btn active" data-layer="street">Street</button>
           <button class="layer-btn" data-layer="topo">Topo</button>
@@ -940,21 +1429,22 @@
           <button class="layer-btn" data-layer="hybrid">Hybrid</button>
         </div>
       </details>
-      <button id="plannerSettingsToggle" class="toolbar-pill" type="button" aria-expanded="false" title="Open planner controls"><span>⚙</span> Preferences <b>⌄</b></button>
     </div>
 
     <div class="top-toolbar toolbar-right" aria-label="Route actions">
       <button id="saveRouteBtn" class="save-route-top" type="button"><span>▣</span> Save route</button>
+      <button id="clearRouteFloating" class="clear-route-top" type="button" title="Clear route"><span aria-hidden="true">×</span> Clear route</button>
       <button id="gpxBtn" class="circle-tool" type="button" title="Export GPX">⇩</button>
-      <button id="clearRouteFloating" class="circle-tool clear-tool" type="button" title="Clear route">×</button>
     </div>
 
-    <div class="right-map-controls" aria-hidden="true">
-      <button class="circle-tool">N</button>
-      <button class="circle-tool">➤</button>
-      <button class="circle-tool">⌗</button>
-      <div class="zoom-visual"><button>＋</button><button>−</button></div>
-      <button class="circle-tool small-3d">3D</button>
+    <div class="right-map-controls" aria-label="Map navigation controls">
+      <button id="locateControl" class="circle-tool location-control" type="button" title="Go to current location" aria-label="Go to current location">
+        <svg class="location-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 3.3 3.9 9.9c-.9.4-.9 1.7.1 2l6.5 2.2 2.2 6.5c.3 1 1.7 1 2.1 0l6.6-16.8c.3-.8-.5-1.6-1.3-1.3l.6.8Zm-7.1 14.1-1.5-4.5a1 1 0 0 0-.7-.7l-4.5-1.5 11.4-4.5-4.7 11.2Z"/></svg>
+      </button>
+      <div class="zoom-visual" aria-label="Map zoom controls">
+        <button id="zoomInControl" type="button" title="Zoom in" aria-label="Zoom in">＋</button>
+        <button id="zoomOutControl" type="button" title="Zoom out" aria-label="Zoom out">−</button>
+      </div>
     </div>
 
     <button id="aiLauncher" type="button" aria-controls="aiRouteAssistant" aria-expanded="false">
@@ -962,19 +1452,30 @@
       <span class="ai-launch-copy"><strong>AI Route</strong><small>Describe a ride</small></span>
     </button>
 
-    <button id="drawTab" type="button" aria-hidden="true"><span class="dot"></span><span id="drawTabLabel">Draw Route</span></button>
+    <button id="drawTab" type="button" aria-label="Draw route"><span class="draw-route-symbol">⌁</span><span id="drawTabLabel">Draw Route</span></button>
     <button id="totalDistanceButton" type="button" title="Zoom to the full route"><span>Total distance</span><strong id="totalDistanceValue">0.0 mi</strong></button>
     <div id="maphint"><span id="maphintText">Click the map to set your start</span> · <b id="wpCount">0</b> points</div>
     <div id="layerWarn">This map layer is not loading. Try another map style.</div>
+    <div id="startRouteToast" role="status" aria-live="polite">Click anywhere on the map to place waypoint 1</div>
 
     <section id="elevwrap" class="elevation-panel collapsed" aria-label="Route summary and elevation">
       <div class="summary-metrics">
         <div class="summary-stat"><div class="num" id="statDist">0.0<span class="unit">mi</span></div><div class="lbl">Distance</div></div>
-        <div class="summary-stat"><div class="num" id="statTime">–</div><div class="lbl">Est. time</div></div>
+        <button class="summary-stat time-estimator-stat" id="timeEstimatorToggle" type="button" aria-expanded="false" aria-controls="timeEstimatorPopover" title="Set your average riding speed">
+          <div class="num" id="statTime">–</div><div class="lbl">Est. time <span class="time-edit-hint" id="timeSpeedLabel">14 mph · edit</span></div>
+        </button>
         <div class="summary-stat"><div class="num" id="statGain">0<span class="unit">ft</span></div><div class="lbl">Elevation gain</div></div>
         <div class="summary-stat"><div class="num" id="statLoss">0<span class="unit">ft</span></div><div class="lbl">Elevation loss</div></div>
-        <div class="summary-stat difficulty-stat"><div class="difficulty-badge">Easy</div><div class="lbl">Difficulty</div></div>
-        <div class="summary-stat speed-stat"><div class="speed-badge">Moderate: 14.4 mph ✎</div><div class="lbl">Speed</div></div>
+      </div>
+      <div id="timeEstimatorPopover" class="time-estimator-popover" hidden>
+        <strong>Estimate your ride time</strong>
+        <p>Enter the average speed you expect to maintain for the whole ride.</p>
+        <label class="speed-entry-label" for="averageSpeedInput">Average speed</label>
+        <div class="speed-entry-row"><input id="averageSpeedInput" type="number" min="1" max="50" step="0.1" inputmode="decimal" value="14"><span>mph</span></div>
+        <div class="speed-presets" aria-label="Average speed presets">
+          <button type="button" data-speed="12">12 mph</button><button type="button" data-speed="15">15 mph</button><button type="button" data-speed="18">18 mph</button>
+        </div>
+        <div class="time-estimator-result" id="timeEstimatorResult">Add a route to calculate your estimated time.</div>
       </div>
       <div id="elevBody" class="elevation-chart-area">
         <div class="elev-title-row">
@@ -1013,6 +1514,7 @@
 
   // ---------------- State ----------------
   let waypoints = []; // {lat, lng, marker}
+  let redoWaypointStack = [];
   let routeLine = null;
   let routeHoverLine = null;
   let routeHoverMarker = null;
@@ -1035,6 +1537,12 @@
   let liveElevationToken = 0;
   let lastLiveElevationAt = 0;
   let routeConstraintMode = 'normal'; // normal | drawn: drawn routes use dense road anchors + shortest routing
+  let currentDistanceMiles = 0;
+  let averageSpeedMph = 14;
+  try{
+    const savedSpeed = Number(localStorage.getItem('waypointAverageSpeedMph'));
+    if(Number.isFinite(savedSpeed) && savedSpeed >= 1 && savedSpeed <= 50) averageSpeedMph = savedSpeed;
+  }catch(error){ /* Browser storage may be unavailable in private/local contexts. */ }
 
   function scheduleRecompute(delay){
     clearTimeout(recomputeTimer);
@@ -1044,9 +1552,93 @@
   const KM_TO_MI = 0.621371;
   const M_TO_FT = 3.28084;
 
+  function escapeHtml(value){
+    return String(value == null ? '' : value).replace(/[&<>\"']/g, character=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'
+    })[character]);
+  }
+
+  function escapeXml(value){
+    return String(value == null ? '' : value).replace(/[&<>\"']/g, character=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&apos;'
+    })[character]);
+  }
+
+
+  function formatRideTime(distanceMiles, speedMph){
+    if(!Number.isFinite(distanceMiles) || distanceMiles <= 0 || !Number.isFinite(speedMph) || speedMph <= 0) return '–';
+    const totalMinutes = Math.max(1, Math.round((distanceMiles / speedMph) * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+  }
+
+  function updateEstimatedTime(){
+    const estimate = formatRideTime(currentDistanceMiles, averageSpeedMph);
+    const stat = document.getElementById('statTime');
+    const speedLabel = document.getElementById('timeSpeedLabel');
+    const result = document.getElementById('timeEstimatorResult');
+    if(stat) stat.textContent = estimate;
+    if(speedLabel) speedLabel.textContent = `${averageSpeedMph.toFixed(averageSpeedMph % 1 ? 1 : 0)} mph · edit`;
+    if(result){
+      result.textContent = currentDistanceMiles > 0
+        ? `${currentDistanceMiles.toFixed(1)} miles at ${averageSpeedMph.toFixed(averageSpeedMph % 1 ? 1 : 0)} mph = ${estimate}.`
+        : 'Add a route to calculate your estimated time.';
+    }
+  }
+
+  function setDistanceStat(distM){
+    currentDistanceMiles = Math.max(0, Number(distM) || 0) / 1609.344;
+    const miles = currentDistanceMiles.toFixed(1);
+    document.getElementById('statDist').innerHTML = `${miles}<span class="unit">mi</span>`;
+    document.getElementById('totalDistanceValue').textContent = `${miles} mi`;
+    updateEstimatedTime();
+  }
+
   // ---------------- Map ----------------
   const map = L.map('map', {zoomControl:true}).setView([35.593, -75.469], 12);
   window.__waypointMap = map;
+
+
+  const timeEstimatorToggle = document.getElementById('timeEstimatorToggle');
+  const timeEstimatorPopover = document.getElementById('timeEstimatorPopover');
+  const averageSpeedInput = document.getElementById('averageSpeedInput');
+
+  function setTimeEstimatorOpen(open){
+    timeEstimatorPopover.hidden = !open;
+    timeEstimatorToggle.setAttribute('aria-expanded', String(open));
+    if(open){
+      averageSpeedInput.value = String(averageSpeedMph);
+      updateEstimatedTime();
+      setTimeout(()=>averageSpeedInput.select(), 40);
+    }
+  }
+
+  function applyAverageSpeed(value, syncInput){
+    if(String(value).trim() === '') return;
+    const parsed = Number(value);
+    if(!Number.isFinite(parsed)) return;
+    averageSpeedMph = Math.max(1, Math.min(50, parsed));
+    if(syncInput !== false) averageSpeedInput.value = String(averageSpeedMph);
+    try{ localStorage.setItem('waypointAverageSpeedMph', String(averageSpeedMph)); }catch(error){}
+    updateEstimatedTime();
+  }
+
+  timeEstimatorToggle.addEventListener('click', event=>{
+    event.stopPropagation();
+    setTimeEstimatorOpen(timeEstimatorPopover.hidden);
+  });
+  timeEstimatorPopover.addEventListener('click', event=>event.stopPropagation());
+  averageSpeedInput.addEventListener('input', ()=>applyAverageSpeed(averageSpeedInput.value, false));
+  averageSpeedInput.addEventListener('keydown', event=>{
+    if(event.key === 'Enter'){ event.preventDefault(); applyAverageSpeed(averageSpeedInput.value); setTimeEstimatorOpen(false); }
+    if(event.key === 'Escape') setTimeEstimatorOpen(false);
+  });
+  document.querySelectorAll('[data-speed]').forEach(button=>{
+    button.addEventListener('click', ()=>applyAverageSpeed(button.dataset.speed));
+  });
+  document.addEventListener('click', ()=>setTimeEstimatorOpen(false));
+  updateEstimatedTime();
 
   // Free, no-API-key base layers — URLs verified directly against the actively-
   // maintained leaflet-providers config (github.com/leaflet-extras/leaflet-providers),
@@ -1179,14 +1771,6 @@
   let mode = 'click'; // 'click' | 'draw'
 
   const sidebar = document.getElementById('sidebar');
-  const plannerSettingsToggle = document.getElementById('plannerSettingsToggle');
-  plannerSettingsToggle.addEventListener('click', ()=>{
-    const open = sidebar.classList.toggle('settings-open');
-    plannerSettingsToggle.classList.toggle('active', open);
-    plannerSettingsToggle.innerHTML = open ? '<span>⚙</span> Preferences <b>⌃</b>' : '<span>⚙</span> Preferences <b>⌄</b>';
-    plannerSettingsToggle.setAttribute('aria-expanded', String(open));
-    setTimeout(()=>map.invalidateSize(false), 240);
-  });
 
   map.on('mousemove', (event)=>{
     if(mode === 'draw' || drawing || elevationChartPointerActive || !elevChart) return;
@@ -1203,8 +1787,7 @@
   });
 
   function labelFor(index, total){
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const text = alphabet[index] || String(index + 1);
+    const text = String(index + 1);
     if(index === 0) return {text, bg:'#5B7F1C'};
     if(index === total-1 && total > 1) return {text, bg:'#CE5A12'};
     return {text, bg:'#075AC8'};
@@ -1224,8 +1807,10 @@
 
   function addWaypoint(lat,lng, opts){
     opts = opts || {};
+    if(!opts.fromRedo && !opts.preserveRedo) redoWaypointStack = [];
     const marker = L.marker([lat,lng], {draggable:true, icon: makeIcon(waypoints.length, waypoints.length+1)}).addTo(map);
-    const wp = {lat,lng,marker};
+    const wp = {lat,lng,marker,label:opts.label || '',customName:opts.customName || '',routeRole:opts.routeRole || ''};
+    marker.on('dragstart', ()=>{ redoWaypointStack = []; updateHistoryButtons(); });
     marker.on('drag', (ev)=>{
       wp.lat = ev.target.getLatLng().lat;
       wp.lng = ev.target.getLatLng().lng;
@@ -1240,7 +1825,10 @@
     recompute();
   }
 
-  function removeWaypoint(i){
+  function removeWaypoint(i, opts){
+    opts = opts || {};
+    if(i < 0 || i >= waypoints.length) return;
+    if(!opts.preserveRedo) redoWaypointStack = [];
     map.removeLayer(waypoints[i].marker);
     waypoints.splice(i,1);
     reindexMarkers();
@@ -1252,13 +1840,30 @@
     waypoints.forEach((wp,i)=> wp.marker.setIcon(makeIcon(i, waypoints.length)));
   }
 
+  function updateHistoryButtons(){
+    const undo = document.getElementById('undoBtn');
+    const redo = document.getElementById('redoVisual');
+    if(undo) undo.disabled = waypoints.length === 0;
+    if(redo) redo.disabled = redoWaypointStack.length === 0;
+  }
+
   document.getElementById('undoBtn').addEventListener('click', ()=>{
     if(!waypoints.length) return;
-    removeWaypoint(waypoints.length-1);
+    const removed = waypoints[waypoints.length-1];
+    redoWaypointStack.push({lat:removed.lat,lng:removed.lng,label:removed.label || '',customName:removed.customName || '',routeRole:removed.routeRole || ''});
+    removeWaypoint(waypoints.length-1, {preserveRedo:true});
+    updateHistoryButtons();
+  });
+  document.getElementById('redoVisual').addEventListener('click', ()=>{
+    const restored = redoWaypointStack.pop();
+    if(!restored) return;
+    addWaypoint(restored.lat, restored.lng, {fromRedo:true,label:restored.label || '',customName:restored.customName || '',routeRole:restored.routeRole || ''});
+    updateHistoryButtons();
   });
   function clearRoute(){
     waypoints.forEach(wp=>map.removeLayer(wp.marker));
     waypoints = [];
+    redoWaypointStack = [];
     drawing = false;
     rawPoints = [];
     if(previewLine){ map.removeLayer(previewLine); previewLine = null; }
@@ -1276,8 +1881,16 @@
   function renderList(){
     const ul = document.getElementById('wplist');
     ul.innerHTML = '';
-    document.getElementById('emptyHint').style.display = waypoints.length ? 'none':'block';
+    const hasWaypoints = waypoints.length > 0;
+    sidebar.classList.toggle('route-empty', !hasWaypoints);
+    document.getElementById('routeEmptyState').hidden = hasWaypoints;
+    document.getElementById('waypointPlannerContent').hidden = !hasWaypoints;
+    document.getElementById('emptyHint').style.display = 'none';
+    if(hasWaypoints) document.getElementById('startRouteToast').classList.remove('show');
     document.getElementById('wpCount').textContent = waypoints.length;
+    const waypointTabCount = document.getElementById('waypointTabCount');
+    if(waypointTabCount) waypointTabCount.textContent = String(waypoints.length);
+    updateHistoryButtons();
     if(mode === 'click'){
       document.getElementById('maphintText').textContent = waypoints.length
         ? 'Click to add the next stop · drag a pin to nudge it'
@@ -1286,14 +1899,24 @@
     waypoints.forEach((wp,i)=>{
       const li = document.createElement('li');
       const {text, bg} = labelFor(i, waypoints.length);
+      const routeRole = i === 0 ? 'Start' : (i === waypoints.length - 1 && waypoints.length > 1 ? 'Finish' : `Stop ${i}`);
+      const fallbackName = wp.routeRole === 'start' ? 'Starting point' : wp.routeRole === 'finish' ? 'Destination' : 'Map waypoint';
+      const pointName = wp.customName || wp.label || fallbackName;
+      const addressDetail = wp.customName && wp.label && wp.customName !== wp.label ? wp.label : '';
       li.innerHTML = `
         <div class="wp-badge" style="background:${bg};">${text}</div>
-        <div class="wp-coord">Waypoint ${i + 1}</div>
+        <div class="wp-name-wrap">
+          <span class="wp-role">${escapeHtml(routeRole)}</span>
+          <span class="wp-custom-name">${escapeHtml(pointName)}</span>
+          ${addressDetail ? `<span class="wp-address-detail">${escapeHtml(addressDetail)}</span>` : ''}
+        </div>
         <div class="wp-actions">
+          <button class="icon-btn rename-waypoint-button" data-act="rename" title="Rename waypoint" aria-label="Rename waypoint ${i+1}">✎</button>
           <button class="icon-btn" data-act="up" title="Move earlier">↑</button>
           <button class="icon-btn" data-act="down" title="Move later">↓</button>
           <button class="icon-btn" data-act="del" title="Remove">✕</button>
         </div>`;
+      li.querySelector('[data-act=rename]').addEventListener('click', ()=>renameWaypoint(i));
       li.querySelector('[data-act=up]').addEventListener('click', ()=>moveWp(i,-1));
       li.querySelector('[data-act=down]').addEventListener('click', ()=>moveWp(i,1));
       li.querySelector('[data-act=del]').addEventListener('click', ()=>removeWaypoint(i));
@@ -1317,6 +1940,16 @@
     recompute();
   }
 
+  function renameWaypoint(i){
+    const wp = waypoints[i];
+    if(!wp) return;
+    const currentName = wp.customName || wp.label || '';
+    const nextName = prompt(`Name waypoint ${i + 1}:`, currentName);
+    if(nextName === null) return;
+    wp.customName = nextName.trim();
+    renderList();
+  }
+
   // ---------------- Location search ----------------
   const locationSearch = document.getElementById('locationSearch');
   const locationSearchBtn = document.getElementById('locationSearchBtn');
@@ -1328,6 +1961,69 @@
     searchStatus.classList.toggle('error', !!isError);
   }
 
+  let searchRoutePlacement = 'next';
+  window.__setWaypointSearchPlacement = function(value){
+    searchRoutePlacement = ['start','next','finish'].includes(value) ? value : 'next';
+  };
+
+  function rebuildWaypoints(items){
+    waypoints.forEach(wp=>map.removeLayer(wp.marker));
+    waypoints = [];
+    items.forEach(item=>addWaypoint(item.lat,item.lng,{
+      silent:true,
+      preserveRedo:true,
+      label:item.label || '',
+      customName:item.customName || '',
+      routeRole:item.routeRole || ''
+    }));
+    redoWaypointStack = [];
+    renderList();
+    recompute();
+  }
+
+  function addSearchedRoutePoint(lat,lng,label,placement){
+    const items = waypoints.map(wp=>({
+      lat:wp.lat,lng:wp.lng,label:wp.label || '',customName:wp.customName || '',routeRole:wp.routeRole || ''
+    }));
+    const point = {lat,lng,label:label || 'Searched location',routeRole:placement === 'next' ? 'stop' : placement};
+
+    if(placement === 'start'){
+      items.forEach(item=>{ if(item.routeRole === 'start') item.routeRole = 'stop'; });
+      items.unshift(point);
+    }else if(placement === 'finish'){
+      items.forEach(item=>{ if(item.routeRole === 'finish') item.routeRole = 'stop'; });
+      items.push(point);
+    }else{
+      const finishIndex = items.findIndex(item=>item.routeRole === 'finish');
+      if(finishIndex >= 0) items.splice(finishIndex,0,point);
+      else items.push(point);
+    }
+
+    rebuildWaypoints(items);
+  }
+
+  function placementLabel(){
+    if(searchRoutePlacement === 'start') return 'start';
+    if(searchRoutePlacement === 'finish') return 'finish';
+    return 'next stop';
+  }
+
+  function searchFeatureDetails(props){
+    const streetAddress = [props.housenumber, props.street].filter(Boolean).join(' ').trim();
+    const title = streetAddress || props.name || props.label || 'Search result';
+    const city = props.locality || props.localadmin || props.neighbourhood || '';
+    const state = props.region || props.region_a || '';
+    const cityState = [city, state].filter(Boolean).join(', ');
+    const placeLine = [cityState, props.postalcode].filter(Boolean).join(' ');
+    const contextParts = [];
+    if(props.county && props.county !== city) contextParts.push(props.county);
+    if(props.country) contextParts.push(props.country);
+    const resultType = props.layer || props.source || '';
+    if(resultType) contextParts.push(String(resultType).replace(/_/g, ' '));
+    const fullLabel = props.label || [title, placeLine, props.country].filter(Boolean).join(', ');
+    return {title, placeLine, context:contextParts.join(' · '), fullLabel};
+  }
+
   function renderSearchResults(features){
     searchResults.innerHTML = '';
     if(!features.length){
@@ -1335,51 +2031,71 @@
       setSearchStatus('No matching locations found.', true);
       return;
     }
+    const seen = new Set();
     features.forEach(feature=>{
       const coords = feature.geometry && feature.geometry.coordinates;
       if(!coords || coords.length < 2) return;
       const props = feature.properties || {};
+      const details = searchFeatureDetails(props);
+      const duplicateKey = `${details.fullLabel}|${Number(coords[1]).toFixed(5)}|${Number(coords[0]).toFixed(5)}`;
+      if(seen.has(duplicateKey)) return;
+      seen.add(duplicateKey);
       const li = document.createElement('li');
       li.tabIndex = 0;
+      li.className = 'planner-search-result';
+      const copy = document.createElement('div');
+      copy.className = 'planner-search-result-copy';
       const title = document.createElement('div');
       title.className = 'search-title';
-      title.textContent = props.label || props.name || 'Search result';
+      title.textContent = details.title;
       const sub = document.createElement('div');
       sub.className = 'search-sub';
-      sub.textContent = [props.locality, props.region, props.country].filter(Boolean).join(' · ');
-      li.appendChild(title);
-      if(sub.textContent) li.appendChild(sub);
+      sub.textContent = details.placeLine || details.fullLabel;
+      const context = document.createElement('div');
+      context.className = 'search-result-context';
+      context.textContent = details.context;
+      const action = document.createElement('span');
+      action.className = 'search-add-label';
+      action.textContent = `Add as ${placementLabel()}`;
+      copy.appendChild(title);
+      if(sub.textContent && sub.textContent !== title.textContent) copy.appendChild(sub);
+      if(context.textContent) copy.appendChild(context);
+      li.appendChild(copy);
+      li.appendChild(action);
       const choose = ()=>{
         setMode('click');
-        map.flyTo([coords[1], coords[0]], Math.max(map.getZoom(), 15));
-        addWaypoint(coords[1], coords[0]);
+        addSearchedRoutePoint(Number(coords[1]), Number(coords[0]), details.fullLabel, searchRoutePlacement);
+        map.flyTo([coords[1], coords[0]], Math.max(map.getZoom(), 14));
+        setSearchStatus(`${details.fullLabel} added as the ${placementLabel()}. Search again to add another stop.`);
         searchResults.classList.remove('show');
-        setSearchStatus('Location added as the next route point.');
+        locationSearch.value = '';
+        locationSearch.focus();
       };
       li.addEventListener('click', choose);
       li.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); choose(); } });
       searchResults.appendChild(li);
     });
     searchResults.classList.add('show');
-    setSearchStatus('Select a result to add it to the route.');
+    setSearchStatus(`Select a detailed result to add it as the ${placementLabel()}.`);
   }
 
   async function runLocationSearch(){
     const query = locationSearch.value.trim();
     if(!query){ setSearchStatus('Enter an address, trail, park, or city.', true); return; }
-    if(!apiKey){ setSearchStatus('Save an OpenRouteService API key before searching.', true); return; }
+    if(!apiKey){ setSearchStatus('A routing connection is required before searching.', true); return; }
     const token = ++searchRequestToken;
     locationSearchBtn.disabled = true;
     setSearchStatus('Searching…');
     searchResults.classList.remove('show');
     try{
-      const center = map.getCenter();
       const url = new URL('https://api.openrouteservice.org/geocode/search');
       url.searchParams.set('api_key', apiKey);
       url.searchParams.set('text', query);
-      url.searchParams.set('size', '7');
-      url.searchParams.set('focus.point.lat', center.lat.toFixed(6));
-      url.searchParams.set('focus.point.lon', center.lng.toFixed(6));
+      url.searchParams.set('size', '10');
+      url.searchParams.set('lang', 'en');
+      const searchCenter = map.getCenter();
+      url.searchParams.set('focus.point.lat', String(searchCenter.lat));
+      url.searchParams.set('focus.point.lon', String(searchCenter.lng));
       const resp = await fetch(url.toString(), {headers:{'Accept':'application/json'}});
       if(token !== searchRequestToken) return;
       if(!resp.ok) throw new Error(`Search service returned ${resp.status}`);
@@ -1629,7 +2345,7 @@
     drawTab.classList.toggle('active', mode==='draw');
     drawTabLabel.textContent = mode==='draw' ? 'Done Drawing' : 'Draw Route';
     modeDrawBtn.textContent = mode==='draw' ? '✓ Done drawing' : '✏️ Draw route';
-    clearRouteFloating.textContent = '×';
+    clearRouteFloating.innerHTML = '<span aria-hidden="true">×</span> Clear route';
     clearRouteFloating.title = mode==='draw' ? 'Clear drawing' : 'Clear route';
     mapEl.classList.toggle('draw-mode', mode==='draw');
     if(mode==='draw'){
@@ -1648,6 +2364,24 @@
   modeClickBtn.addEventListener('click', ()=>setMode('click'));
   modeDrawBtn.addEventListener('click', ()=>setMode(mode==='draw' ? 'click' : 'draw'));
   drawTab.addEventListener('click', ()=> setMode(mode==='draw' ? 'click' : 'draw'));
+  let startRouteToastTimer = null;
+  function showStartRouteToast(message){
+    const toast = document.getElementById('startRouteToast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(startRouteToastTimer);
+    startRouteToastTimer = setTimeout(()=>toast.classList.remove('show'), 5000);
+  }
+  document.getElementById('emptyStartClick').addEventListener('click', ()=>{
+    setMode('click');
+    showStartRouteToast('Click anywhere on the map to place waypoint 1');
+    mapEl.focus({preventScroll:true});
+  });
+  document.getElementById('emptyStartDraw').addEventListener('click', ()=>{
+    setMode('draw');
+    showStartRouteToast('Press and drag on the map to draw your route');
+    mapEl.focus({preventScroll:true});
+  });
   clearRouteFloating.addEventListener('click', clearRoute);
   document.getElementById('totalDistanceButton').addEventListener('click', ()=>{
     if(routeLine && typeof routeLine.getBounds === 'function'){
@@ -2266,9 +3000,7 @@
         const totals = elevationGainLoss(elevated);
         let liveDistance = 0;
         for(let i=1;i<line.length;i++) liveDistance += haversine(line[i-1][1],line[i-1][0],line[i][1],line[i][0]);
-        const liveMiles = (liveDistance/1609.344).toFixed(1);
-        document.getElementById('statDist').innerHTML = `${liveMiles}<span class="unit">mi</span>`;
-        document.getElementById('totalDistanceValue').textContent = `${liveMiles} mi`;
+        setDistanceStat(liveDistance);
         document.getElementById('statGain').innerHTML = `${Math.round(totals.gain*M_TO_FT)}<span class="unit">ft</span>`;
         document.getElementById('statLoss').innerHTML = `${Math.round(totals.loss*M_TO_FT)}<span class="unit">ft</span>`;
         setElevationStatus('Live draw preview', 'loading');
@@ -2294,16 +3026,7 @@
   }
 
   function updateStats(distM, durS, gainM, lossM, hasRoad){
-    const miles = (distM/1609.344).toFixed(1);
-    document.getElementById('statDist').innerHTML = `${miles}<span class="unit">mi</span>`;
-    document.getElementById('totalDistanceValue').textContent = `${miles} mi`;
-    if(durS != null){
-      const mins = Math.round(durS/60);
-      const h = Math.floor(mins/60), m = mins%60;
-      document.getElementById('statTime').innerHTML = h>0 ? `${h}h ${m}m` : `${m}<span class="unit">min</span>`;
-    } else {
-      document.getElementById('statTime').innerHTML = `–`;
-    }
+    setDistanceStat(distM);
     if(gainM != null){
       document.getElementById('statGain').innerHTML = `${Math.round(gainM*3.28084)}<span class="unit">ft</span>`;
       document.getElementById('statLoss').innerHTML = `${Math.round(lossM*3.28084)}<span class="unit">ft</span>`;
@@ -2555,7 +3278,7 @@
       name,
       created: new Date().toISOString(),
       profile: document.getElementById('profile').value,
-      waypoints: waypoints.map(wp=>({lat:wp.lat,lng:wp.lng})),
+      waypoints: waypoints.map(wp=>({lat:wp.lat,lng:wp.lng,label:wp.label || '',customName:wp.customName || '',routeRole:wp.routeRole || ''})),
       summary: routeSummaryLine()
     };
     try{
@@ -2595,7 +3318,7 @@
     waypoints.forEach(wp=>map.removeLayer(wp.marker));
     waypoints = [];
     if(data.profile) document.getElementById('profile').value = data.profile;
-    (data.waypoints || []).forEach(p=>addWaypoint(p.lat,p.lng,{silent:true}));
+    (data.waypoints || []).forEach(p=>addWaypoint(p.lat,p.lng,{silent:true,label:p.label || '',customName:p.customName || '',routeRole:p.routeRole || ''}));
     renderList();
     recompute();
     if(waypoints.length){
@@ -2610,7 +3333,8 @@
     const trackPts = routeCoordsElev && routeCoordsElev.length ? routeCoordsElev : waypoints.map(wp=>[wp.lng,wp.lat]);
     let gpx = `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Waypoint" xmlns="http://www.topografix.com/GPX/1/1">\n`;
     waypoints.forEach((wp,i)=>{
-      gpx += `  <wpt lat="${wp.lat}" lon="${wp.lng}"><name>WP${i+1}</name></wpt>\n`;
+      const waypointName = wp.customName || wp.label || `WP${i+1}`;
+      gpx += `  <wpt lat="${wp.lat}" lon="${wp.lng}"><name>${escapeXml(waypointName)}</name></wpt>\n`;
     });
     gpx += `  <trk><name>Waypoint Route</name><trkseg>\n`;
     trackPts.forEach(c=>{
@@ -2632,6 +3356,7 @@
 
   // ---------------- Init ----------------
   loadKey();
+  renderList();
   recompute();
   refreshSavedList();
   drawElevation([], 'Add two points to begin');
@@ -2646,54 +3371,104 @@
 (function(){
   const mapWrap = document.getElementById('mapwrap');
   const sidebar = document.getElementById('sidebar');
-  const searchToggle = document.getElementById('searchPlaceToggle');
-  const inlineSearch = document.getElementById('inlineSearch');
+  const searchTab = document.getElementById('searchPlannerTab');
+  const waypointsTab = document.getElementById('waypointsPlannerTab');
+  const searchPanel = document.getElementById('searchPlannerPanel');
+  const waypointsPanel = document.getElementById('waypointsPlannerPanel');
   const locationInput = document.getElementById('locationSearch');
-  const roundTripQuick = document.getElementById('roundTripQuick');
-  const roundTripButton = document.getElementById('roundTripBtn');
-  const optionsButton = document.getElementById('openPanelOptions');
-  const preferencesButton = document.getElementById('plannerSettingsToggle');
-  const drawProxy = document.getElementById('drawToolbarProxy');
-  const drawButton = document.getElementById('modeDrawBtn');
-  const closeInline = document.querySelector('.panel-close-inline');
-  const currentLocation = document.getElementById('useCurrentLocation');
-  const savedPlaces = document.getElementById('showSavedRoutes');
+  const panelHandle = document.getElementById('panelCollapseHandle');
 
-  searchToggle.addEventListener('click', function(){
-    inlineSearch.classList.toggle('open');
-    if(inlineSearch.classList.contains('open')) setTimeout(()=>locationInput.focus(), 30);
+  function selectPlannerTab(name){
+    const searchActive = name === 'search';
+    searchTab.classList.toggle('active', searchActive);
+    waypointsTab.classList.toggle('active', !searchActive);
+    searchTab.setAttribute('aria-selected', String(searchActive));
+    waypointsTab.setAttribute('aria-selected', String(!searchActive));
+
+    sidebar.classList.toggle('search-tab-open', searchActive);
+    if(searchActive){
+      searchPanel.hidden = false;
+      searchPanel.removeAttribute('hidden');
+      waypointsPanel.hidden = true;
+      waypointsPanel.setAttribute('hidden', '');
+      mapWrap.classList.remove('route-panel-collapsed');
+      setTimeout(()=>{
+        locationInput.focus();
+        if(window.__waypointMap) window.__waypointMap.invalidateSize();
+      }, 40);
+    }else{
+      searchPanel.hidden = true;
+      searchPanel.setAttribute('hidden', '');
+      waypointsPanel.hidden = false;
+      waypointsPanel.removeAttribute('hidden');
+      setTimeout(()=>{
+        if(window.__waypointMap) window.__waypointMap.invalidateSize();
+      }, 40);
+    }
+  }
+
+  searchTab.addEventListener('click', event=>{
+    event.preventDefault();
+    selectPlannerTab('search');
   });
-  roundTripQuick.addEventListener('click', function(){
-    sidebar.classList.add('settings-open');
-    preferencesButton.classList.add('active');
-    setTimeout(()=>roundTripButton.scrollIntoView({behavior:'smooth',block:'center'}),50);
+  waypointsTab.addEventListener('click', event=>{
+    event.preventDefault();
+    selectPlannerTab('waypoints');
   });
-  optionsButton.addEventListener('click', ()=>preferencesButton.click());
-  closeInline.addEventListener('click', ()=>{ if(sidebar.classList.contains('settings-open')) preferencesButton.click(); });
-  drawProxy.addEventListener('click', ()=>drawButton.click());
-  drawButton.addEventListener('click', ()=>{ drawProxy.classList.toggle('active', drawButton.classList.contains('active')); });
-  document.querySelectorAll('.suggestion-item[data-search]').forEach(button=>button.addEventListener('click',()=>{
-    inlineSearch.classList.add('open');
-    locationInput.value=button.dataset.search||'';
-    locationInput.focus();
-  }));
-  currentLocation.addEventListener('click', ()=>{
-    if(!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(pos=>{
-      const map = window.__waypointMap;
-      if(map) map.flyTo([pos.coords.latitude,pos.coords.longitude],15);
-      document.getElementById('modeClickBtn').click();
+  document.querySelectorAll('[data-route-placement]').forEach(button=>{
+    button.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-route-placement]').forEach(item=>item.classList.remove('active'));
+      button.classList.add('active');
+      const placement = button.dataset.routePlacement || 'next';
+      if(window.__setWaypointSearchPlacement) window.__setWaypointSearchPlacement(placement);
+      const status = document.getElementById('searchStatus');
+      if(status) status.textContent = `Search for the route ${placement === 'next' ? 'stop' : placement}.`;
     });
   });
-  savedPlaces.addEventListener('click', ()=>{
-    sidebar.classList.add('settings-open');
-    preferencesButton.classList.add('active');
-    const list=document.getElementById('savedlist');
-    setTimeout(()=>list.scrollIntoView({behavior:'smooth',block:'center'}),50);
-  });
-  document.querySelector('.panel-more').addEventListener('click',()=>preferencesButton.click());
-  document.getElementById('redoVisual').addEventListener('click',()=>{});
-  document.getElementById('panelCollapseHandle').addEventListener('click',()=>mapWrap.classList.toggle('route-panel-collapsed'));
+  if(panelHandle) panelHandle.addEventListener('click',()=>mapWrap.classList.toggle('route-panel-collapsed'));
+
+  const map = window.__waypointMap;
+  const locateControl = document.getElementById('locateControl');
+  const previewRouteBtn = document.getElementById('previewRouteBtn');
+  const zoomInControl = document.getElementById('zoomInControl');
+  const zoomOutControl = document.getElementById('zoomOutControl');
+  const fitRouteButton = document.getElementById('totalDistanceButton');
+  let currentLocationMarker = null;
+
+  function fitCurrentRoute(){
+    if(fitRouteButton) fitRouteButton.click();
+  }
+
+  if(map){
+    if(zoomInControl) zoomInControl.addEventListener('click', ()=>map.zoomIn());
+    if(zoomOutControl) zoomOutControl.addEventListener('click', ()=>map.zoomOut());
+    if(previewRouteBtn) previewRouteBtn.addEventListener('click', fitCurrentRoute);
+
+    if(locateControl){
+      const setLocateLoading = loading=>{
+        locateControl.disabled = loading;
+        locateControl.classList.toggle('locating', loading);
+        locateControl.setAttribute('aria-busy', String(loading));
+      };
+      locateControl.addEventListener('click', ()=>{
+        setLocateLoading(true);
+        map.locate({setView:true,maxZoom:15,enableHighAccuracy:true,timeout:10000});
+      });
+      map.on('locationfound', event=>{
+        setLocateLoading(false);
+        if(currentLocationMarker) map.removeLayer(currentLocationMarker);
+        currentLocationMarker = L.marker(event.latlng, {
+          interactive:false,
+          icon:L.divIcon({className:'',html:'<div class="map-location-marker"></div>',iconSize:[16,16],iconAnchor:[8,8]})
+        }).addTo(map);
+      });
+      map.on('locationerror', ()=>{
+        setLocateLoading(false);
+        locateControl.classList.add('control-pulse');
+        setTimeout(()=>locateControl.classList.remove('control-pulse'), 700);
+      });
+    }
+  }
 })();
 </script>
 
